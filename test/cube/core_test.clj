@@ -21,9 +21,16 @@
   (c/make-position [:a :b] 12.3) => throws #"in \[0.0"
   )
 
-(future-fact "distance-to-corner on my edge"
-  (c/distance-to-corner (c/make-position [:a :b] 0.6) :b) => 0.4
-  (c/distance-to-corner (c/make-position [:a :b] 0) :b) => 1
-  (c/distance-to-corner (c/make-position [:a :b] 0) :a) => 0
-  (c/distance-to-corner (c/make-position [:a :b] 1/2) :a) => 1/2
+(fact "I can report edges adjacent to a corner"
+  (c/edges-adjacent-to-corner :c) => #{#{:c :d} #{:g :c} #{:c :b}}
+  (c/edges-adjacent-to-corner :g) => #{#{:g :h} #{:g :f} #{:g :c}}
   )
+
+
+(fact "I can report edges adjacent to an edge"
+  (c/make-edge [:a :b]) => #{:a :b}
+  (c/edges-adjacent-to-edge (c/make-edge [:a :b])) =>
+    #{#{:a :e} #{:b :f} #{:a :d} #{:b :c}}
+  (c/edges-adjacent-to-edge (c/make-edge [:c :d])) =>
+    #{#{:d :h} #{:c :g} #{:a :d} #{:b :c}}
+)

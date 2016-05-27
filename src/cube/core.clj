@@ -1,4 +1,5 @@
-(ns cube.core)
+(ns cube.core
+  (:use clojure.set))
 
 (def cube
   "  a----------b
@@ -33,11 +34,16 @@
     (>= 1 number)))
 
 
+(defn make-edge
+  [edge]
+  (apply sorted-set edge))
+
+
 (defn make-position
   [corners position]
   (if-not (valid-position? position)
     (throw (Exception. "position must be in [0.0,1.0]"))
-    (->Position (apply sorted-set corners) position)))
+    (->Position (make-edge corners) position)))
 
 
 (defn closest-corners
@@ -49,3 +55,16 @@
       (> p 1/2) #{(second e)}
       :else (into #{} e)
       )))
+
+
+(defn edges-adjacent-to-corner
+  [corner]
+  (set (map #(make-edge [corner %]) (get-in cube [:branches corner]))))
+
+
+(defn edges-adjacent-to-edge
+  [edge]
+  (difference
+    (apply union (map edges-adjacent-to-corner edge))
+    #{edge}))
+
